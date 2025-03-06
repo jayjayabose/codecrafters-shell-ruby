@@ -13,6 +13,8 @@ class Shell
   end
 
   def validate_command(command:)
+    return if command.downcase == "exit"
+    
     $stdout.write("#{command}: command not found\n")
     get_input
   end
