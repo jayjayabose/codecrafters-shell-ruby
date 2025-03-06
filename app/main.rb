@@ -14,6 +14,7 @@ class Shell
 
   def validate_command(command:)
     $stdout.write("#{command}: command not found\n")
+    get_input
   end
 end
 
