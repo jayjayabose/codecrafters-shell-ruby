@@ -1,21 +1,31 @@
 # Uncomment this block to pass the first stage
 require 'pry'
-class Command
-  def self.call
-    raise NotImplementedError
-  end
-end
 
-class Echo < Command
-  def self.call(args) = $stdout.write("#{args.join(' ')} \n")
-end
+# class Command
+#   def self.call =raise NotImplementedError
+# end
+
+# class Echo < Command
+#   def self.call(args) = $stdout.write("#{args.join(' ')} \n")
+# end
+
+# class Type < Command
+#   def self.call(args) 
+#      if recognized_command?(command: args[0])
+#       $stdout.write("#{args[0]} is a shell builtin\n")
+#      else
+#       $stdout.write("#{args[0]}: command not found\n")
+#      end
+#   end
+# end
 
 class Shell
-
-  COMMANDS = %w[exit echo]
-  EXECUTORS = {
-    "echo" => Echo
-  }
+  COMMANDS = %w[exit echo type] # probably drop this
+  # EXECUTORS = {
+  #   "echo" => Echo,
+  #   "type" => Type,
+  #   "exit" => nil,
+  # }
 
   attr_accessor :command, :args
 
@@ -25,17 +35,22 @@ class Shell
 
   def get_input
     $stdout.write("$ ")
-    
-    # Wait for user input
     self.command, *self.args = gets.downcase.chomp.split(" ")
     process_input
   end
 
   def process_input
-    return if command == "exit"
-
-    if command_is_valid?(command:)
-      EXECUTORS[command].call(args)
+    case command
+    when "exit"
+      return
+    when "echo"
+      $stdout.write("#{args.join(' ')} \n")
+    when "type"
+      if recognized_command?(command: args[0])
+        $stdout.write("#{args[0]} is a shell builtin\n")
+      else
+        $stdout.write("#{args[0]}: not found\n")
+      end       
     else
       $stdout.write("#{command}: command not found\n")
     end
@@ -43,7 +58,7 @@ class Shell
     get_input
   end
 
-  def command_is_valid?(command:)
+  def recognized_command?(command:)
     COMMANDS.include?(command)
   end
 end
